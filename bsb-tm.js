@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BSB-TM
 // @version      0.1
-// @description  简单的油吼脚本,利用https://github.com/hanydd/BilibiliSponsorBlock的API跳过B站视频中的广告
+// @description  简单的油猴脚本,利用https://github.com/hanydd/BilibiliSponsorBlock的API跳过B站视频中的广告
 // @author       KSEHiyo
 // @license      GPLv3
 // @match        *://*.bilibili.com/video/*
@@ -25,12 +25,6 @@ window.onload = function() {
 
     observer.observe(bodyList, config);
 };
-
-
-window.onload = function() {
-  initSponsorBlock();
-};
-
 
 function initSponsorBlock() {
     'use strict';
