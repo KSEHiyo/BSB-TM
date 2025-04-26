@@ -5,8 +5,9 @@
 // @author       KSEHiyo
 // @license      GPLv3
 // @match        *://*.bilibili.com/video/*
-// @grant        GM.xmlhttpRequest
+// @grant        GM_xmlhttpRequest
 // @connect      bsbsb.top
+// @connect      115.190.32.254
 // ==/UserScript==
 
 var oldHref = document.location.href;
@@ -90,7 +91,7 @@ async function getSponsorTimestamps(videoId) {
         const url = `https://bsbsb.top/api/skipSegments?videoID=${videoId}&category=sponsor`;
         console.log(url);
 
-        GM.xmlhttpRequest({
+        GM_xmlhttpRequest({
             method: "GET",
             url: url,
             headers: {
