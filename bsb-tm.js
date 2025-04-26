@@ -5,6 +5,8 @@
 // @author       KSEHiyo
 // @license      GPLv3
 // @match        *://*.bilibili.com/video/*
+// @grant        GM.xmlhttpRequest
+// @connect      bsbsb.top
 // ==/UserScript==
 
 var oldHref = document.location.href;
@@ -41,7 +43,7 @@ function initSponsorBlock() {
     // get sponsor timestamps
     getSponsorTimestamps(videoId).then(sponsorTimestamps => {
         if (!sponsorTimestamps) {
-            console.log('sponsor block api error');
+            console.log('getSponsorTimestamps FAILED');
             return;
         }
 
@@ -83,30 +85,31 @@ function getVideoId() {
     return videoId;
 }
 
-// get sponsor timpstamps
 async function getSponsorTimestamps(videoId) {
-    const url = `https://bsbsb.top/api/skipSegments?videoID=${videoId}&category=sponsor`;
-    console.log(url);
-    const headers = {
-        "origin": "chrome-extension://eaoelafamejbnggahofapllmfhlhajdd",
-        "x-ext-version": "0.5.0"
-    };
+    return new Promise((resolve, reject) => {
+        const url = `https://bsbsb.top/api/skipSegments?videoID=${videoId}&category=sponsor`;
+        console.log(url);
 
-
-    try {
-        let response = await fetch(url, {
+        GM.xmlhttpRequest({
             method: "GET",
-            headers: headers
+            url: url,
+            headers: {
+                "origin": "chrome-extension://eaoelafamejbnggahofapllmfhlhajdd",
+                "x-ext-version": "0.5.0"
+            },
+            onload: function(response) {
+                if (response.status >= 200 && response.status < 300) {
+                    let data = JSON.parse(response.responseText);
+                    resolve(data[0].segment);
+                } else {
+                    console.log('sponsor block api error');
+                    resolve(null);
+                }
+            },
+            onerror: function(error) {
+                console.log('sponsor block api error', error);
+                resolve(null);
+            }
         });
-        if (response.ok) {
-            let data = await response.json();
-            return data[0].segment;
-        } else {
-            console.log('sponsor block api error');
-            return null;
-        }
-    } catch (error) {
-        console.log('sponsor block api error', error);
-        return null;
-    }
+    });
 }
